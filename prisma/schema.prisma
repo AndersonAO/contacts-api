@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Contact {
+  id            String               @id @default(uuid())
+  name          String
+  email         String
+  phone         String?
+  type          Type
+  cpf_cnpj      String
+  status        Status
+  addresses     ContactsAddress[]
+  dt_created_at DateTime          @default(now())
+  dt_updated_at DateTime          @default(now()) @updatedAt
+
+  @@map("contacts")
+}
+
+model ContactsAddress {
+  id          String     @id @default(uuid())
+  id_contacts String
+  zipcode     String
+  street      String
+  number      String
+  complement  String
+  district    String
+  city        String
+  state       String
+  contact     Contact @relation(fields: [id_contacts], references: [id])
+
+  @@map("contacts_address")
+}
+
+enum Type {
+  PF
+  PJ
+}
+
+enum Status {
+  Ativo
+  Inativo
+}
